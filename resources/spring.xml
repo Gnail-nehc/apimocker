@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	">
+	<!-- 引入属性文件 -->
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:properties/config.properties</value>
+				<value>classpath:properties/mail.properties</value>
+			</list>
+		</property>
+	</bean>
+	<!-- <context:property-placeholder location="classpath:config.properties" /> -->
+	
+	<context:component-scan base-package="com.testmocker" />
+
+	<bean class="com.testmocker.utils.JdbcUtils" id="JdbcUtils">
+		<constructor-arg  value="${jdbc.source}"/>
+		<constructor-arg  value="${jdbc.server}"/>
+		<constructor-arg  value="${jdbc.port}"/>
+		<constructor-arg  value="${jdbc.username}"/>
+		<constructor-arg  value="${jdbc.password}"/>
+		<constructor-arg  value="${jdbc.database}"/>
+	</bean>
+	
+	<bean id="mailItem" class="com.testmocker.httpmodel.MailItem">
+		<property name="host" value="${mail.host}"></property>
+		<property name="port" value="${mail.port}"></property>
+		<property name="mailFrom" value="${mail.from}"></property>
+		<property name="mailCC" value="${mail.cc}"></property>
+		<property name="mailTo" value="${mail.mailTo}"></property>
+	</bean>
+	<bean id="mailWebServiceClient" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl">
+			<value></value>
+		</property>
+		<property name="serviceInterface">
+			<value>com.testmocker.service.MailWebService</value>
+		</property>
+	</bean>
+	<bean id="freeMarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="classpath:/template" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">1800</prop>
+				<prop key="default_encoding">GBK</prop>
+				<prop key="locale">zh_CN</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>
